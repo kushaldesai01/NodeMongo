@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import responseHandler from "../../services/responseHandler";
 import { userModel } from "../user/userModel";
 import { checkJWTExpire, generateJWT } from "./authService";
-import { signupSchemaType } from "./authSchema";
+import { loginSchemaType, signupSchemaType } from "./authSchema";
 import { stringDecryption, stringEncryption } from "../../services/functions";
 
-export const signup = async (req: Request<{}, {}, signupSchemaType>, res: Response): Promise<any> => {
+export const signup = async (req: Request<{}, {}, signupSchemaType>, res: Response) => {
   try {
     const { name, email, password } = req.body;
     await userModel.create({
@@ -20,7 +20,7 @@ export const signup = async (req: Request<{}, {}, signupSchemaType>, res: Respon
   }
 };
 
-export const login = async (req: Request, res: Response): Promise<any> => {
+export const login = async (req: Request<{}, {}, loginSchemaType>, res: Response) => {
   try {
     const { email, password } = req.body;
     let findEmail = await userModel.find({ email: email });
