@@ -19,12 +19,11 @@ export const zodSchemaValidator =
           path: error.path.join(","),
           message: error.message,
         }));
-        console.log("eror", errors);
-        // let firstError: string = errors?.[0]?.message;
-        // if (!errors?.[0]?.message.includes(errors?.[0]?.path)) {
-        //   firstError = errors?.[0]?.path + " : " + errors?.[0]?.message;
-        // }
-        return responseHandler.validationError(res, errors);
+        let firstError: string = errors?.[0]?.message;
+        if (!errors?.[0]?.message.includes(errors?.[0]?.path)) {
+          firstError = errors?.[0]?.path + " : " + errors?.[0]?.message;
+        }
+        return responseHandler.validationError(res, firstError);
       } else {
         next();
       }

@@ -13,10 +13,9 @@ export const signupSchema = z.object({
   password: z
     .string({ invalid_type_error: "password must be of type string", required_error: "password required" })
     .min(1, "password required")
-    .min(8, "password must be at least 8 characters long")
     .regex(
       passwordRegex,
-      "password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
+      "password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
     ),
 });
 export type signupSchemaType = z.infer<typeof signupSchema>;
