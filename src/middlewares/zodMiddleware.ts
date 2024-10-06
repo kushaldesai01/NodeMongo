@@ -1,10 +1,10 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { ZodSchema } from "zod";
 import responseHandler from "../services/responseHandler";
 
 export const zodSchemaValidator =
-  (schema: ZodSchema<any>, requestPayload: { body?: boolean; query?: boolean }) =>
-  (req: any, res: Response, next: NextFunction): any => {
+  (schema: ZodSchema, requestPayload: { body?: boolean; query?: boolean }) =>
+  (req: Request, res: Response, next: NextFunction) => {
     try {
       let requestData = {};
       if (requestPayload.body) {
@@ -15,11 +15,11 @@ export const zodSchemaValidator =
       }
       let result = schema.safeParse(requestData);
       if (!result.success) {
-        const errors: any = result.error.errors.map((error: any) => ({
+        const errors = result.error.errors.map((error) => ({
           path: error.path.join(","),
           message: error.message,
         }));
-        let firstError: string = errors?.[0]?.message;
+        let firstError = errors?.[0]?.message;
         if (!errors?.[0]?.message.includes(errors?.[0]?.path)) {
           firstError = errors?.[0]?.path + " : " + errors?.[0]?.message;
         }

@@ -4,9 +4,9 @@ import responseHandler from "../../services/responseHandler";
 import { userModel } from "../user/userModel";
 import { APP } from "../../variables/constants";
 
-export const verifyToken = async (req: any, res: Response, next: NextFunction): Promise<any> => {
+export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let token: string = req.headers["Token"] || req.headers["Authorization"];
+    let token = (req.headers["Token"] as string) || (req.headers["Authorization"] as string);
     if (!token) {
       return responseHandler.unauthorized(res, "Token required");
     }
@@ -22,7 +22,7 @@ export const verifyToken = async (req: any, res: Response, next: NextFunction): 
         return responseHandler.unauthorized(res, "Invalid token");
       }
       jwt.verify(token, APP.JWT_SECRET_KEY);
-      req.user_id = val[0]["_id"];
+      req.user_id = String(val[0]["_id"]);
       req.email = val[0]["email"];
       return next();
     } catch (err) {
@@ -33,7 +33,7 @@ export const verifyToken = async (req: any, res: Response, next: NextFunction): 
   }
 };
 
-// export const verifyAdmin = async (req: any, res: Response, next: NextFunction): Promise<any> => {
+// export const verifyAdmin = async (req: any, res: Response, next: NextFunction) => {
 //   try {
 //     let val = await userModel.find({ _id: req.user_id });
 //     if (val?.[0]?.type !== "admin") {
