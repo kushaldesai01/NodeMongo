@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 const router = Router();
 import authRoute from "../modules/auth/authRouter";
 

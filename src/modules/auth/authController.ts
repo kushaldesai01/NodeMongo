@@ -8,13 +8,17 @@ import { stringDecryption, stringEncryption } from "../../services/functions";
 export const signup = async (req: Request<{}, {}, signupSchemaType>, res: Response) => {
   try {
     const { name, email, password } = req.body;
-    await userModel.create({
+    let emailCounts = await userModel.countDocuments({ email: email });
+    if (emailCounts > 0) {
+      return responseHandler.validationError(res, "Email already exists");
+    }
+    let data = await userModel.create({
       name: name,
       email: email,
       password: await stringEncryption(password),
       token: await generateJWT({ email: email }),
     });
-    return responseHandler.success(res, "Signed up successfully");
+    return responseHandler.success(res, "Signed up successfully", { token: data?.token });
   } catch (error) {
     return responseHandler.error(res, error);
   }
@@ -23,7 +27,7 @@ export const signup = async (req: Request<{}, {}, signupSchemaType>, res: Respon
 export const login = async (req: Request<{}, {}, loginSchemaType>, res: Response) => {
   try {
     const { email, password } = req.body;
-    let findEmail = await userModel.find({ email: email });
+    let findEmail = await userModel.find({ email: email }, { password: 1, token: 1 });
     if (findEmail.length === 0) {
       return responseHandler.validationError(res, "Invalid credentials");
     }
