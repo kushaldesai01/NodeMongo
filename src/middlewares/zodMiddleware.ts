@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodSchema } from "zod";
-import responseHandler from "../services/responseHandler";
+import { responseHandler } from "../services/responseHandler";
 
 export const zodSchemaValidator =
   (schema: ZodSchema, requestPayload: { body?: boolean; query?: boolean }) =>
@@ -23,11 +23,11 @@ export const zodSchemaValidator =
         if (!errors?.[0]?.message.includes(errors?.[0]?.path)) {
           firstError = errors?.[0]?.path + " : " + errors?.[0]?.message;
         }
-        return responseHandler.validationError(res, firstError);
+        return responseHandler(res).failure(firstError);
       } else {
         next();
       }
-    } catch (error) {
-      return responseHandler.error(res, error);
+    } catch (error: any) {
+      return responseHandler(res).failure(error.message);
     }
   };

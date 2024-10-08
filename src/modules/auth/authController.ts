@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import responseHandler from "../../services/responseHandler";
+import { responseHandler } from "../../services/responseHandler";
 import { userModel } from "../user/userModel";
 import { checkJWTExpire, generateJWT } from "./authService";
 import { loginSchemaType, signupSchemaType } from "./authSchema";
@@ -10,7 +10,7 @@ export const signup = async (req: Request<{}, {}, signupSchemaType>, res: Respon
     const { name, email, password } = req.body;
     const emailCounts = await userModel.countDocuments({ email: email });
     if (emailCounts > 0) {
-      return responseHandler.validationError(res, "Email already exists");
+      return responseHandler(res).failure("Email already exists");
     }
     const data = await userModel.create({
       name: name,
@@ -18,9 +18,9 @@ export const signup = async (req: Request<{}, {}, signupSchemaType>, res: Respon
       password: await stringEncryption(password),
       token: await generateJWT({ email: email }),
     });
-    return responseHandler.success(res, "Signed up successfully", { token: data?.token });
-  } catch (error) {
-    return responseHandler.error(res, error);
+    return responseHandler(res).success("Signed up successfully", { token: data?.token });
+  } catch (error: any) {
+    return responseHandler(res).failure(error.message);
   }
 };
 
@@ -29,11 +29,11 @@ export const login = async (req: Request<{}, {}, loginSchemaType>, res: Response
     const { email, password } = req.body;
     const findEmail = await userModel.find({ email: email }, { password: 1, token: 1 });
     if (findEmail.length === 0) {
-      return responseHandler.validationError(res, "Invalid credentials");
+      return responseHandler(res, 404).failure("Invalid credentials");
     }
     const decryptedPassword = await stringDecryption(findEmail[0]["password"]);
     if (password !== decryptedPassword) {
-      return responseHandler.validationError(res, "Invalid credentials");
+      return responseHandler(res, 404).failure("Invalid credentials");
     }
 
     const isTokenExpired = await checkJWTExpire(findEmail[0]["token"] ?? "");
@@ -44,8 +44,8 @@ export const login = async (req: Request<{}, {}, loginSchemaType>, res: Response
     } else {
       generatedToken = findEmail[0]["token"] as string;
     }
-    return responseHandler.success(res, "Logged in successfully", { token: generatedToken });
-  } catch (error) {
-    return responseHandler.error(res, error);
+    return responseHandler(res).success("Logged in successfully", { token: generatedToken });
+  } catch (error: any) {
+    return responseHandler(res).failure(error.message);
   }
 };

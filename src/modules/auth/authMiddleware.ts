@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import responseHandler from "../../services/responseHandler";
+import { responseHandler } from "../../services/responseHandler";
 import { userModel } from "../user/userModel";
 import { APP } from "../../variables/constants";
 
@@ -8,7 +8,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
   try {
     let token = (req.headers["Token"] as string) || (req.headers["Authorization"] as string);
     if (!token) {
-      return responseHandler.unauthorized(res, "Token required");
+      return responseHandler(res, 401).failure("Token required");
     }
     let headerArr = token?.split(" ");
     if (headerArr.length > 1) {
@@ -19,17 +19,17 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     try {
       let val = await userModel.find({ token: token });
       if (val.length === 0) {
-        return responseHandler.unauthorized(res, "Invalid token");
+        return responseHandler(res, 401).failure("Invalid token");
       }
       jwt.verify(token, APP.JWT_SECRET_KEY);
       req.user_id = String(val[0]["_id"]);
       req.email = val[0]["email"];
       return next();
     } catch (err) {
-      return responseHandler.unauthorized(res, "Invalid token");
+      return responseHandler(res, 401).failure("Invalid token");
     }
-  } catch (error) {
-    return responseHandler.error(res, error);
+  } catch (error: any) {
+    return responseHandler(res, 401).failure(error.message);
   }
 };
 
@@ -37,10 +37,10 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 //   try {
 //     let val = await userModel.find({ _id: req.user_id });
 //     if (val?.[0]?.type !== "admin") {
-//       return responseHandler.validationError(res, "You don't have enough permission to perform this action");
+//       return responseHandler(res).failure("You don't have enough permission to perform this action");
 //     }
 //     return next();
-//   } catch (error) {
-//     return responseHandler.error(res, error);
+//   } catch (error: any) {
+//     return responseHandler(res).failure(error.message);
 //   }
 // };
