@@ -5,8 +5,12 @@ import { connectToDatabase } from "./database/connection";
 const app = express();
 import appRouter from "./services/router";
 import { swaggerJSON } from "./services/swagger";
+import { responseHandler } from "./services/responseHandler";
 
+// database connection
 connectToDatabase();
+
+// middleware
 app.use(express.json());
 
 // swagger
@@ -19,16 +23,15 @@ app.use("/api", appRouter);
 
 // catch any error
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  res
-    .status(err.status || 500)
-    .json({ status: res.statusCode, success: false, message: err.message || "Internal error" });
+  return responseHandler(res, err.status || 500).failure(err.message || "Internal server error");
 });
 
 // URL not found error
 app.use("*", (req: Request, res: Response) => {
-  res.status(404).json({ status: res.statusCode, success: false, message: "URL not found" });
+  return responseHandler(res, 404).failure("URL not found");
 });
 
+// app listen
 app.listen(APP.PORT, () => {
   console.log(APP.APP_LINK);
 });
