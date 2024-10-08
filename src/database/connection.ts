@@ -2,11 +2,10 @@ import mongoose from "mongoose";
 import { APP } from "../variables/constants";
 
 export const connectToDatabase = async () => {
-  try{
+  try {
     await mongoose.connect(APP.DATABASE_URL);
     console.log("Connected to database");
+  } catch (error: any) {
+    console.log(error.message);
   }
-  catch(error){
-    throw error;
-  }
-}
+};
