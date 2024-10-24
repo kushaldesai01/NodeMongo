@@ -3,3 +3,4 @@ package-lock.json
 project_setup.txt
 
 .env
+dist

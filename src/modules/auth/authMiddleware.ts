@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import { responseHandler } from "../../services/responseHandler";
 import { userModel } from "../user/userModel";
 import { APP } from "../../variables/constants";
+import { checkJWT } from "./authService";
+import { getErrorMessage } from "../../services/functions";
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,27 +18,26 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     } else {
       token = headerArr[0];
     }
-    try {
-      let val = await userModel.find({ token: token });
-      if (val.length === 0) {
-        return responseHandler(res, 401).failure("Invalid token");
-      }
-      jwt.verify(token, APP.JWT_SECRET_KEY);
-      req.user_id = String(val[0]["_id"]);
-      req.email = val[0]["email"];
-      return next();
-    } catch (err) {
+    const checkToken = await checkJWT(token);
+    if (!checkToken.valid) {
       return responseHandler(res, 401).failure("Invalid token");
     }
-  } catch (error: any) {
-    return responseHandler(res, 401).failure(error.message);
+    let findToken = await userModel.findOne({ token: token });
+    if (!findToken) {
+      return responseHandler(res, 401).failure("Invalid token");
+    }
+    req.user_id = String(findToken["_id"]);
+    req.email = findToken["email"];
+    return next();
+  } catch (error) {
+    return responseHandler(res, 401).failure(getErrorMessage(error));
   }
 };
 
-// export const verifyAdmin = async (req: any, res: Response, next: NextFunction) => {
+// export const verifyAdmin = async (req: Request, res: Response, next: NextFunction) => {
 //   try {
-//     let val = await userModel.find({ _id: req.user_id });
-//     if (val?.[0]?.type !== "admin") {
+//     let findUser = await userModel.findOne({ _id: req.user_id });
+//     if (findUser.type !== "admin") {
 //       return responseHandler(res).failure("You don't have enough permission to perform this action");
 //     }
 //     return next();
