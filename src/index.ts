@@ -15,6 +15,11 @@ connectToDatabase();
 app.use(cors());
 app.use(express.json());
 
+// test route
+app.get("/", (req: Request, res: Response) => {
+  res.send(`${APP.APP_URL}/swagger`);
+});
+
 // swagger
 app.use("/swagger", swaggerUI.serveFiles(swaggerJSON), (req: Request, res: Response) => {
   res.send(swaggerUI.generateHTML(swaggerJSON));
