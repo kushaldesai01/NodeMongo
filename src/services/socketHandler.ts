@@ -1,5 +1,3 @@
-// src/socketHandler.ts
-
 import { Server, Socket } from "socket.io";
 
 export const socketHandler = (io: Server) => {
