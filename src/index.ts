@@ -13,7 +13,8 @@ import { socketHandler } from "./services/socketHandler";
 
 // Create an HTTP server
 const server = http.createServer(app);
-const io = new Server(server);
+// Socket IO
+export const io = socketHandler(server);
 
 // database connection
 connectToDatabase();
@@ -21,6 +22,7 @@ connectToDatabase();
 // middleware
 app.use(cors());
 app.use(express.json());
+
 
 // test route
 app.get("/", (req: Request, res: Response) => {
@@ -34,9 +36,6 @@ app.use("/swagger", swaggerUI.serveFiles(swaggerJSON), (req: Request, res: Respo
 
 // app router
 app.use("/api", appRouter);
-
-// Setup Socket.IO
-socketHandler(io);
 
 // catch any error
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
