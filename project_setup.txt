@@ -1,0 +1,41 @@
+npm init
+npx tsc --init
+npm install 
+  typescript 
+  ts-node 
+  @types/node 
+  nodemon 
+  @types/express
+  @types/mongoose
+  @types/multer
+  --save-dev
+"make necessary(outDir, rootDir, include src/**/*, ts-node) changes in tsconfig.json"
+"add commands in package.json"
+npm install 
+  express
+  mongoose
+  multer
+
+-----------------git
+git init
+add .gitignore
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/kushaldesai01/PracticeBack.git
+git push -u origin master
+git checkout -b kushalbranch
+git push -u origin kushalbranch
+
+-------------ts-node in tsconfig.json
+"ts-node": {
+    // It is faster to skip typechecking.
+    // Remove if you want ts-node to do typechecking.
+    "transpileOnly": true,
+    "files": true,
+    "compilerOptions": {
+      // compilerOptions specified here will override those declared below,
+      // but *only* in ts-node.  Useful if you want ts-node and tsc to use
+      // different options with a single tsconfig.json.
+      "typeRoots": ["node_modules/@types", "src/@types"]
+    }
+  },

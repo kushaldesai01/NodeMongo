@@ -1,6 +1,8 @@
 import CryptoJS from "crypto-js";
 import { APP, MAIL_SERVICE } from "../variables/constants";
 import nodemailer from "nodemailer";
+import { fileURLToPath } from "url";
+import path from "path";
 
 export const stringEncryption = async (string: string): Promise<string> => {
   try {
@@ -56,3 +58,9 @@ export const getErrorMessage = (error: unknown): string => {
     return "An unknown error occurred";
   }
 };
+
+// export const directoryPath = (relativePath: string) => {
+//   const __filename = fileURLToPath(import.meta.url);
+//   const __dirname = path.dirname(__filename);
+//   return path.join(__dirname, "..", relativePath);
+// };

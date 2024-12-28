@@ -20,9 +20,12 @@ export const io = socketHandler(server);
 connectToDatabase();
 
 // middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(express.json());
-
 
 // test route
 app.get("/", (req: Request, res: Response) => {
@@ -30,6 +33,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // swagger
+// postwoman
+// postman to swagger metamug https://metamug.com/util/postman-to-swagger/
+// yaml to js https://www.ubercompute.com/yaml-to-javascript
 app.use("/swagger", swaggerUI.serveFiles(swaggerJSON), (req: Request, res: Response) => {
   res.send(swaggerUI.generateHTML(swaggerJSON));
 });

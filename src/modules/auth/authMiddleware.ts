@@ -8,7 +8,7 @@ import { getErrorMessage } from "../../services/functions";
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let token = (req.headers["Token"] as string) || (req.headers["Authorization"] as string);
+    let token = (req.headers["token"] as string) || (req.headers["authorization"] as string);
     if (!token) {
       return responseHandler(res, 401).failure("Token required");
     }
