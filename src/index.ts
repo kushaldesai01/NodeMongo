@@ -2,7 +2,6 @@ import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import swaggerUI from "swagger-ui-express";
 import http from "http";
-import { Server } from "socket.io";
 import { APP } from "./variables/constants";
 import { connectToDatabase } from "./database/connection";
 const app = express();
