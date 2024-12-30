@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { responseHandler } from "../../services/responseHandler";
 import fs from "fs";
 import { testModel } from "./testModel";
+import mongoose, { ClientSession } from "mongoose";
 
 export const test = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -32,11 +33,9 @@ export const fileUploadMultiple = async (req: Request, res: Response) => {
 
 export const connectModelDatabase = async (req: Request, res: Response) => {
   try {
-    // Transaction acid
-    // socket.io
     await testModel.create({ user_id: req.user_id });
     let val = await testModel.find({}).populate("user_id");
-    return responseHandler(res).success("");
+    return responseHandler(res).success("In connect model database");
   } catch (error: any) {
     return responseHandler(res).failure(error.message);
   }
@@ -49,5 +48,19 @@ export const ejsRender = async (req: Request, res: Response) => {
     res.render("test", { name, age });
   } catch (error: any) {
     return responseHandler(res).failure(error.message);
+  }
+};
+
+export const mongoTransaction = async (req: Request, res: Response) => {
+  const session: ClientSession = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    await session.commitTransaction();
+    return responseHandler(res).success("In mongo transaction");
+  } catch (error: any) {
+    await session.abortTransaction();
+    return responseHandler(res).failure(error.message);
+  } finally {
+    session.endSession();
   }
 };
