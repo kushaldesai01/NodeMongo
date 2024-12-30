@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
+import path from 'path';
 import swaggerUI from "swagger-ui-express";
 import http from "http";
 import { APP } from "./variables/constants";
@@ -25,6 +26,10 @@ app.use(
   })
 );
 app.use(express.json());
+
+// Ejs file render
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // test route
 app.get("/", (req: Request, res: Response) => {

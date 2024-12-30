@@ -11,6 +11,6 @@ export const APP = {
 };
 
 export const MAIL_SERVICE = {
-  EMAIL: "",
-  PASSWORD: "",
+  EMAIL: process.env.EMAIL,
+  PASSWORD: process.env.PASSWORD,
 }

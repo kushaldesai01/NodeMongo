@@ -8,6 +8,8 @@ npm install
   @types/express
   @types/mongoose
   @types/multer
+  @types/dotenv
+  @types/ejs
   --save-dev
 "make necessary(outDir, rootDir, include src/**/*, ts-node) changes in tsconfig.json"
 "add commands in package.json"
@@ -15,6 +17,8 @@ npm install
   express
   mongoose
   multer
+  dotenv
+  ejs
 
 -----------------git
 git init
