@@ -73,3 +73,31 @@ const userSchema = new mongoose.Schema({
     },
   },
 });
+
+
+const cluster = require('cluster');  // Import the 'cluster' module
+const os = require('os');  // Import the 'os' module to get the number of CPU cores
+const express = require('express');  // Import the 'express' module to create the web server
+
+// Check if this process is the master process or a worker process
+if (cluster.isMaster) {
+  // The 'cluster.isMaster' property checks if the current process is the master process
+  
+  const numCpus = os.cpus().length;  // Get the number of CPU cores on the machine
+  // 'os.cpus().length' returns the number of CPU cores available
+  
+  // Fork a worker for each CPU core
+  for (let i = 0; i < numCpus; i++) {
+    cluster.fork();  // Create a new worker process
+  }
+
+  // Listen for workers that exit (e.g., if a worker crashes or dies)
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);  // Log when a worker dies
+  });
+} else {
+  // If this is not the master process, then it's a worker process
+  const app = express();  // Create an Express application instance
+  app.get('/', (req, res) => res.send('Hello World'));  // Define a basic route
+  app.listen(3000, () => console.log(`Server running on port 3000`));  // Start the server
+}

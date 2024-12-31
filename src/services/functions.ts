@@ -1,15 +1,11 @@
-import CryptoJS from "crypto-js";
+import cryptoJS from "crypto-js";
 import { APP, MAIL_SERVICE } from "../variables/constants";
 import nodemailer from "nodemailer";
 import path from "path";
 
 export const stringEncryption = async (string: string): Promise<string> => {
   try {
-    return CryptoJS.AES.encrypt(string, APP.CRYPTO_KEY)
-      .toString()
-      .replace(/\+/g, "xMl3Jk")
-      .replace(/\//g, "Por21Ld")
-      .replace(/=/g, "Ml32");
+    return cryptoJS.AES.encrypt(string, APP.CRYPTO_KEY).toString();
   } catch (error) {
     throw error;
   }
@@ -17,11 +13,7 @@ export const stringEncryption = async (string: string): Promise<string> => {
 
 export const stringDecryption = async (string: string): Promise<string> => {
   try {
-    string = string
-      .replace(/xMl3Jk/g, "+")
-      .replace(/Por21Ld/g, "/")
-      .replace(/Ml32/g, "=");
-    return CryptoJS.AES.decrypt(string, APP.CRYPTO_KEY).toString(CryptoJS.enc.Utf8);
+    return cryptoJS.AES.decrypt(string, APP.CRYPTO_KEY).toString(cryptoJS.enc.Utf8);
   } catch (error) {
     throw error;
   }
@@ -61,4 +53,3 @@ export const getErrorMessage = (error: unknown): string => {
 export const directoryPath = (relativePath: string) => {
   return path.join(__dirname, "..", relativePath);
 };
-

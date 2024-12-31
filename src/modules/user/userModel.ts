@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
     socket_id: { type: String },
     otp: { type: String },
     otp_timestamp: { type: Number },
-    created_at: { type: Date },
+    created_at: { type: Date, default: () => new Date() },
   },
   { versionKey: false }
 );
