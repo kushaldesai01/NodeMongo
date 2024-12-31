@@ -45,3 +45,31 @@ git push -u origin kushalbranch
   },
 
 ------------postwoman
+
+
+
+
+
+
+
+const userSchema = new mongoose.Schema({
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    validate: {
+      validator: function (value) {
+        return value.length >= 6; // Password must be at least 6 characters
+      },
+      message: 'Password must be at least 6 characters long',
+    },
+  },
+  confirmPassword: {
+    type: String,
+    validate: {
+      validator: function (value) {
+        return value === this.password; // Confirm password must match password
+      },
+      message: 'Confirm password must match password',
+    },
+  },
+});

@@ -7,13 +7,24 @@ export const socketHandler = (server: http.Server): Server => {
   const io = new Server(server);
 
   io.on("connection", async (socket: Socket) => {
-    console.log("New client connected", socket.handshake.query.user_id);
-    // let a = mongoose.Types.ObjectId(socket.handshake.query.user_id)
-    // console.log("aaa", typeof socket.handshake.query.user_id)
-    await userModel.updateOne({ _id: socket.handshake.query.user_id }, { $set: { socket_id: socket.id } });
-    // socket.on("register", async (userID: string) => {
-    //   socket.emit("register", `${userID} registered successfully`);
-    // });
+    // console.log("New client connected", socket.handshake.query.user_id);
+    console.log("New client connected", socket.id);
+
+    socket.on("register", async (userID: string) => {
+      try {
+        if (!mongoose.isValidObjectId(userID)) {
+          return socket.emit("register", `Error occurred while registering user-id: ${userID}`);
+        }
+        const checkID = await userModel.countDocuments({ _id: userID });
+        if(checkID < 1){
+          return socket.emit("register", `Error occurred while registering user-id: ${userID}`);
+        }
+        await userModel.updateOne({ _id: userID }, { $set: { socket_id: socket.id } });
+        socket.emit("register", `${userID} registered successfully`);
+      } catch (error) {
+        socket.emit("register", `Error occurred while registering user-id: ${userID}`);
+      }
+    });
 
     socket.on("message", (message: string) => {
       console.log(`Received message: ${message}`);

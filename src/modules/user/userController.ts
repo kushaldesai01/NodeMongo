@@ -2,17 +2,15 @@ import { Request, Response } from "express";
 import { responseHandler } from "../../services/responseHandler";
 import { getErrorMessage } from "../../services/functions";
 import { userModel } from "./userModel";
-import { io } from "../..";
+import { io } from "../../index";
 
 export const listUsers = async (req: Request, res: Response) => {
   try {
     const userList = await userModel.find({}, { name: 1, email: 1 });
-    // io.emit("message", userList);
-    // console.log(userSocketMap, "in api")
+    io.emit("scoreList", [{ virat: 100, rohit: 99 }]);
     let userDetails = await userModel.findOne({ _id: req.user_id }, { socket_id: 1 });
-    if(userDetails?.socket_id){
-      console.log("herer", userDetails.socket_id);
-      io.to(userDetails.socket_id).emit("friendslist", `hi ${req.user_id}`);
+    if (userDetails?.socket_id) {
+      io.to(userDetails.socket_id).emit("friendList", ["virat", "rohit"]);
     }
     return responseHandler(res).success("User list fetched successfully", userList);
   } catch (error: unknown) {
