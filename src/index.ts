@@ -13,11 +13,10 @@ import { socketHandler } from "./services/socketHandler";
 
 // Create an HTTP server
 const server = http.createServer(app);
-// Socket IO
-export const io = socketHandler(server);
-
 // database connection
 connectToDatabase();
+// Socket IO
+export const io = socketHandler(server);
 
 // middleware
 app.use(

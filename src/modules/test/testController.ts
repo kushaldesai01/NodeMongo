@@ -34,6 +34,7 @@ export const fileUploadMultiple = async (req: Request, res: Response) => {
 export const connectModelDatabase = async (req: Request, res: Response) => {
   try {
     await testModel.create({ user_id: req.user_id });
+    await testModel.updateOne({ user_id: req.user_id }, { $push: { test_array: "a" } });
     let val = await testModel.find({}).populate("user_id");
     return responseHandler(res).success("In connect model database");
   } catch (error: any) {
